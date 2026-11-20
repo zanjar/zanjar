@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zanjar Services | Cilindros Hidráulicos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg-body:#EEF0F3;--bg-surface:#FFFFFF;--bg-dark:#0F1215;--bg-dark-2:#171B20;
+  --text-main:#12161A;--text-muted:#505A66;--border-light:#D9DEE5;
+  --accent:#C20808;--accent-dark:#940606;--accent-soft:#FDF2F2;--accent-border:#F2BDBD;--accent-text:#FFFFFF;
+  --cut:16px;--radius:4px;--transition-theme:.35s ease;
+}
+body[data-theme="red"]{--accent:#C20808;--accent-dark:#940606;--accent-soft:#FDF2F2;--accent-border:#F2BDBD;--accent-text:#FFFFFF}
+body[data-theme="green"]{--accent:#5A9E31;--accent-dark:#437823;--accent-soft:#F3F9EF;--accent-border:#C4E2B2;--accent-text:#FFFFFF}
+body[data-theme="blue"]{--accent:#005AD6;--accent-dark:#0043A1;--accent-soft:#F0F6FF;--accent-border:#B8D2FA;--accent-text:#FFFFFF}
+body[data-theme="yellow"]{--accent:#F7C600;--accent-dark:#D6AB00;--accent-soft:#FFFBEB;--accent-border:#F7E183;--accent-text:#121417}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-body);color:var(--text-main);line-height:1.65;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Barlow','Inter',sans-serif;line-height:1.1;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 clamp(16px,4vw,36px)}
+
+/* ===== HEADER ===== */
+.site-header{background:var(--bg-surface);border-bottom:1px solid var(--border-light);position:relative;z-index:100}
+.site-header::after{content:"";position:absolute;left:0;bottom:-1px;height:4px;width:min(220px,40%);background:var(--accent);transition:background var(--transition-theme)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:80px;padding:10px 0}
+.brand-link{display:flex;align-items:center;flex-shrink:0}
+.brand-logo{height:clamp(40px,6vw,56px);width:auto;object-fit:contain}
+.nav-desktop{display:flex;align-items:center;gap:2px;flex-wrap:wrap;justify-content:flex-end}
+.nav-btn{background:transparent;border:none;font-family:'Barlow','Inter',sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-main);padding:12px 14px;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s ease,background-color .2s ease}
+.nav-desktop .nav-btn::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.nav-desktop .nav-btn:hover::after,.nav-desktop .nav-btn.active::after{transform:scaleX(1)}
+.nav-desktop .nav-btn.active{color:var(--text-main)}
+.menu-toggle{display:none;background:var(--bg-surface);border:2px solid var(--text-main);border-radius:var(--radius);width:46px;height:46px;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer;padding:8px;flex-shrink:0}
+.menu-toggle span{display:block;width:22px;height:2.5px;background:var(--text-main);transition:transform .25s ease,opacity .25s ease}
+.menu-toggle.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.menu-toggle.open span:nth-child(2){opacity:0}
+.menu-toggle.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.nav-mobile{display:none;background:var(--bg-dark);padding:10px 0 18px}
+.nav-mobile.open{display:block}
+.nav-mobile-list{display:flex;flex-direction:column;gap:2px}
+.nav-mobile .nav-btn{width:100%;text-align:left;padding:14px 14px;font-size:1.02rem;color:#E6EAF0;border-left:4px solid transparent}
+.nav-mobile .nav-btn:hover{background:rgba(255,255,255,.06)}
+.nav-mobile .nav-btn.active{background:rgba(255,255,255,.08);color:#FFFFFF;border-left-color:var(--accent)}
+
+/* ===== PÁGINAS ===== */
+main{flex:1}
+.page-view{display:none;animation:pageEnter .35s ease forwards}
+.page-view.active{display:block}
+@keyframes pageEnter{from{opacity:0}to{opacity:1}}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
+.reveal.revealed{opacity:1;transform:translateY(0)}
+
+/* ===== HERO ===== */
+.page-hero{position:relative;overflow:hidden;color:#FFFFFF;background-color:var(--bg-dark);
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  padding:clamp(48px,8vw,104px) 0 clamp(64px,9vw,120px);
+  clip-path:polygon(0 0,100% 0,100% calc(100% - clamp(22px,4vw,48px)),0 100%);margin-bottom:calc(-1 * clamp(22px,4vw,48px) + 1px)}
+.page-hero::before{content:"";position:absolute;top:0;bottom:0;right:-6%;width:38%;background:var(--accent);transform:skewX(-18deg);opacity:.85;transition:background var(--transition-theme)}
+.page-hero::after{content:"";position:absolute;top:0;bottom:0;right:30%;width:10px;background:var(--accent);transform:skewX(-18deg);opacity:.5;transition:background var(--transition-theme)}
+.page-hero .container{position:relative;z-index:2}
+.page-hero h1{font-size:clamp(2.1rem,6vw,4rem);font-weight:800;text-transform:uppercase;margin-bottom:18px;max-width:780px;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+.page-hero p.hero-lead{font-size:clamp(1rem,2.2vw,1.2rem);color:#D6DBE3;max-width:640px;margin-bottom:30px;text-shadow:0 1px 12px rgba(0,0,0,.5)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+
+/* Fondos fotográficos reales */
+#page-cilindros .page-hero{
+  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
+    url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=80');
+}
+#page-maquinados .page-hero{
+  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
+    url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=1600&q=80');
+}
+#page-nosotros .page-hero{
+  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
+    url('https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=1600&q=80');
+}
+#page-garantias .page-hero{
+  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
+    url('https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&w=1600&q=80');
+}
+#page-galeria .page-hero{
+  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
+    url('https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=1600&q=80');
+}
+#page-contacto .page-hero{
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:36px 36px;
+}
+#page-contacto .page-hero::before{
+  opacity:.95;
+}
+
+/* ===== BOTONES ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Barlow','Inter',sans-serif;font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.05em;padding:14px 28px;border:2px solid transparent;cursor:pointer;text-align:center;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:transform .18s ease,background-color .2s ease,color .2s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:var(--accent-text)}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-outline-light{background:rgba(255,255,255,.96);color:var(--bg-dark)}
+.btn-outline-light:hover{background:#FFFFFF}
+.btn-outline-dark{background:var(--bg-surface);color:var(--text-main);border-color:var(--border-light)}
+.btn-outline-dark:hover{background:var(--accent-soft)}
+
+/* ===== SECCIONES ===== */
+.section-block{padding:clamp(44px,7vw,84px) 0}
+.section-block.alt-bg{background:var(--bg-surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)}
+.section-header{margin-bottom:clamp(24px,4vw,40px);max-width:780px}
+.section-header h2{font-size:clamp(1.5rem,3.6vw,2.3rem);font-weight:800;text-transform:uppercase;color:var(--text-main);padding-left:16px;margin-bottom:10px;position:relative}
+.section-header h2::before{content:"";position:absolute;left:0;top:.08em;bottom:.08em;width:6px;background:var(--accent);transition:background var(--transition-theme)}
+.section-header p{color:var(--text-muted);font-size:1rem;padding-left:16px}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:clamp(14px,2.5vw,24px)}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:clamp(16px,3vw,28px)}
+
+/* Tarjetas: placas de acero con esquina biselada */
+.card{position:relative;background:var(--bg-surface);border:1px solid var(--border-light);border-top:5px solid var(--accent);padding:clamp(22px,3vw,32px);clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%);transition:border-color var(--transition-theme),transform .2s ease,box-shadow .2s ease}
+.alt-bg .card{background:var(--bg-body)}
+.card h3{font-size:1.3rem;font-weight:800;margin-bottom:12px;color:var(--text-main)}
+.card p{color:var(--text-muted);font-size:.98rem}
+
+/* Servicios */
+.service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:0;border-top:1px solid var(--border-light);border-left:1px solid var(--border-light);background:var(--bg-surface)}
+.service-item{display:flex;align-items:flex-start;gap:14px;border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light);padding:20px 22px;font-weight:600;font-size:.98rem;line-height:1.45;color:var(--text-main);position:relative;transition:background-color .2s ease}
+.service-item:hover{background:var(--accent-soft)}
+.service-dot{width:12px;height:12px;background:var(--accent);margin-top:6px;flex-shrink:0;clip-path:polygon(0 0,100% 0,100% 60%,60% 100%,0 100%);transition:background var(--transition-theme)}
+
+/* Etiquetas */
+.chip-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.chip{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--bg-surface);border:1px solid var(--border-light);border-bottom:4px solid var(--accent);color:var(--text-main);font-weight:600;font-size:.94rem;padding:12px 14px;min-height:52px;transition:background-color .2s ease,transform .2s ease}
+.alt-bg .chip{background:var(--bg-body)}
+.chip:hover{background:var(--accent-soft);transform:translateY(-2px)}
+
+/* Listas de verificación */
+.check-list{list-style:none;display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.check-list li{display:flex;align-items:flex-start;gap:12px;color:var(--text-main);font-size:.98rem}
+.check-mark{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--accent);color:var(--accent-text);font-weight:800;font-size:.82rem;flex-shrink:0;margin-top:1px;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%)}
+.check-mark.muted{background:#2B313A;color:#FFFFFF}
+
+/* ===== CONTACTO ===== */
+.contact-actions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin-bottom:44px}
+.contact-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:26px 18px;border:1px solid var(--border-light);background:var(--bg-surface);color:var(--text-main);text-align:center;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%);transition:transform .18s ease,background-color .2s ease}
+.contact-btn:hover{transform:translateY(-3px);background:var(--accent-soft)}
+.contact-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.contact-btn.primary:hover{background:var(--accent-dark)}
+.contact-btn-title{font-family:'Barlow',sans-serif;font-size:1.25rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.contact-btn-sub{font-size:.96rem;font-weight:500;opacity:.92;word-break:break-word}
+.contact-info-list{display:flex;flex-direction:column;gap:14px;max-width:780px;margin-bottom:44px}
+.contact-info-list p{color:var(--text-main);font-size:1rem;padding:4px 0 4px 18px;border-left:5px solid var(--accent)}
+.locations-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
+.location-item{background:var(--bg-surface);border:1px solid var(--border-light);border-bottom:4px solid var(--accent);padding:20px 22px}
+.location-item strong{display:block;font-family:'Barlow',sans-serif;font-size:1.1rem;text-transform:uppercase;margin-bottom:6px;color:var(--text-main)}
+.location-item span{font-size:.95rem;color:var(--text-muted)}
+
+/* ===== GALERÍA ===== */
+.gallery-empty{min-height:240px;border:2px dashed var(--border-light);background:var(--bg-surface)}
+
+/* ===== FOOTER ===== */
+.site-footer{background:var(--bg-dark);color:#C9D0DA;border-top:5px solid var(--accent);padding:46px 0 24px;transition:border-color var(--transition-theme)}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:32px;margin-bottom:30px}
+.footer-brand-box{background:#FFFFFF;padding:12px 16px;display:inline-block;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.footer-logo{height:40px;width:auto}
+.site-footer h4{color:#FFFFFF;font-size:1.05rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--accent)}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-links a,.footer-links button{background:none;border:none;color:#C9D0DA;font-size:.95rem;cursor:pointer;text-align:left;padding:0;font-family:inherit;transition:color .2s ease}
+.footer-links a:hover,.footer-links button:hover{color:#FFFFFF;text-decoration:underline}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:18px;font-size:.85rem;color:#9AA3B0}
+
+/* ===== RESPONSIVE ===== */
+@media (hover:hover){.card:hover{transform:translateY(-3px)}}
+@media (max-width:960px){.nav-desktop{display:none}.menu-toggle{display:inline-flex}.page-hero::before{width:30%;right:-10%}.page-hero::after{right:22%}}
+@media (max-width:600px){
+  .page-hero::before{width:22%}.page-hero::after{display:none}
+  .hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hero-actions .btn{width:100%;padding:13px 10px;font-size:.9rem}
+  .chip-list{grid-template-columns:repeat(2,1fr);gap:8px}
+  .chip{font-size:.87rem;padding:10px 8px;min-height:48px}
+  .service-item{padding:16px 16px}
+}
+@media (max-width:340px){.hero-actions{grid-template-columns:1fr}.chip-list{grid-template-columns:1fr}.brand-logo{height:36px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body data-theme="red">
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="#cilindros" class="brand-link" data-page="cilindros" aria-label="Zanjar Services">
+        <img id="header-logo" class="brand-logo" src="logo rojo.png" alt="Zanjar Services" />
+      </a>
+      <nav class="nav-desktop" aria-label="Navegación principal">
+        <button class="nav-btn active" data-page="cilindros">Cilindros Hidráulicos</button>
+        <button class="nav-btn" data-page="maquinados">Maquinados y Soldadura</button>
+        <button class="nav-btn" data-page="nosotros">Nosotros</button>
+        <button class="nav-btn" data-page="garantias">Garantías</button>
+        <button class="nav-btn" data-page="galeria">Galería</button>
+        <button class="nav-btn" data-page="contacto">Contacto</button>
+      </nav>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Navegación móvil">
+    <div class="container">
+      <div class="nav-mobile-list">
+        <button class="nav-btn active" data-page="cilindros">Cilindros Hidráulicos</button>
+        <button class="nav-btn" data-page="maquinados">Maquinados y Soldadura</button>
+        <button class="nav-btn" data-page="nosotros">Nosotros</button>
+        <button class="nav-btn" data-page="garantias">Garantías</button>
+        <button class="nav-btn" data-page="galeria">Galería de servicios realizados</button>
+        <button class="nav-btn" data-page="contacto">Contacto</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- PÁGINA 1: CILINDROS HIDRÁULICOS (ROJO) -->
+  <section id="page-cilindros" class="page-view active" data-theme="red" data-logo="logo rojo.png" data-title="Cilindros Hidráulicos | Zanjar Services">
+    <div class="page-hero">
+      <div class="container">
+        <h1 class="reveal">Cilindros Hidráulicos</h1>
+        <p class="hero-lead reveal">Deja de comprar en el extranjero y confía en la industria nacional. Ofrecemos la mejor calidad, competitividad y seguridad en cada uno de nuestros servicios.</p>
+        <div class="hero-actions reveal">
+          <a href="tel:5555725027" class="btn btn-primary">Llamar</a>
+          <a href="mailto:ventas@zanjar.net?subject=Cotizaci%C3%B3n%20Cilindros%20Hidr%C3%A1ulicos" class="btn btn-outline-light">Solicitar cotización</a>
+        </div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="section-header reveal"><h2>Ofrecemos los siguientes servicios</h2></div>
+        <div class="service-grid">
+          <div class="service-item reveal"><span class="service-dot"></span><span>Fabricación completa sobre muestra física y/o planos</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Mantenimiento correctivo</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Mantenimiento preventivo</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Reconstrucción completa, recuperación de medidas en metales</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Servicio de cromo duro industrial</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Servicio de metalizado</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Servicio de rectificado de componentes</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Fabricación especial de sellos</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Maquinados especiales</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Bruñido de camisas</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Fabricación de refacciones</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Convenio de refacciones con fabricantes</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Servicio correctivo a sistema de conexiones</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Fabricación y reacondicionamiento de clevis</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Mano de obra calificada</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="section-block alt-bg">
+      <div class="container">
+        <div class="section-header reveal"><h2>Cilindros hidráulicos de</h2></div>
+        <div class="chip-list reveal">
+          <span class="chip">Levante</span>
+          <span class="chip">Inclinación</span>
+          <span class="chip">Suspensión</span>
+          <span class="chip">Dirección</span>
+          <span class="chip">Prensas</span>
+          <span class="chip">Camión de bajo perfil</span>
+          <span class="chip">Equipos subterráneos</span>
+          <span class="chip">Elementos mecánicos</span>
+          <span class="chip">Equipos de perforación</span>
+          <span class="chip">Maquinaria pesada</span>
+          <span class="chip">Maquinaria industrial</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 2: MAQUINADOS Y SOLDADURA (VERDE) -->
+  <section id="page-maquinados" class="page-view" data-theme="green" data-logo="logo verde.png" data-title="Maquinados y Soldadura | Zanjar Services">
+    <div class="page-hero">
+      <div class="container">
+        <h1 class="reveal">Maquinados y Soldadura</h1>
+        <p class="hero-lead reveal">Trabajamos con muestra física y sobre diseños y planos proporcionados por nuestros clientes.</p>
+        <div class="hero-actions reveal">
+          <a href="tel:5555725027" class="btn btn-primary">Llamar</a>
+          <a href="mailto:ventas@zanjar.net?subject=Env%C3%ADo%20de%20planos" class="btn btn-outline-light">Enviar planos</a>
+        </div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="section-header reveal"><h2>Servicios que ofrecemos</h2></div>
+        <div class="service-grid">
+          <div class="service-item reveal"><span class="service-dot"></span><span>Maquinados industriales</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Servicios de rectificado</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Balanceo dinámico</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Cepillado</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Pailería industrial</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Soldadura eléctrica y autógena</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Galvanizado</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Generado de engranes</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Pavonado</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Cromo duro industrial</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Tratamientos térmicos</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Corte láser</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Corte por chorro de agua</span></div>
+          <div class="service-item reveal"><span class="service-dot"></span><span>Corte con pantógrafo</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="section-block alt-bg">
+      <div class="container">
+        <div class="section-header reveal"><h2>Materiales para la industria</h2></div>
+        <div class="chip-list reveal" style="margin-bottom: 48px;">
+          <span class="chip">Aceros tratados</span>
+          <span class="chip">Acero inoxidable</span>
+          <span class="chip">Bronces</span>
+          <span class="chip">Hierro colado</span>
+          <span class="chip">Polímeros (plásticos)</span>
+          <span class="chip">Aluminio</span>
+          <span class="chip">Cobre</span>
+          <span class="chip">Etc.</span>
+        </div>
+        <div class="section-header reveal"><h2>Tipo de piezas</h2></div>
+        <div class="chip-list reveal">
+          <span class="chip">Flechas</span>
+          <span class="chip">Tornillos</span>
+          <span class="chip">Husillos</span>
+          <span class="chip">Engranes</span>
+          <span class="chip">Coronas</span>
+          <span class="chip">Piñones</span>
+          <span class="chip">Coples</span>
+          <span class="chip">Niples</span>
+          <span class="chip">Chumaceras</span>
+          <span class="chip">Tanques</span>
+          <span class="chip">Mesas</span>
+          <span class="chip">Bujes</span>
+          <span class="chip">Bridas</span>
+          <span class="chip">Casquillos y roscas</span>
+          <span class="chip">Tolvas, ductos y canaletas</span>
+          <span class="chip">Estructuras metálicas y soportes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 3: NOSOTROS (AZUL) -->
+  <section id="page-nosotros" class="page-view" data-theme="blue" data-logo="logo azul.png" data-title="Nosotros | Zanjar Services">
+    <div class="page-hero">
+      <div class="container">
+        <h1 class="reveal">Nosotros</h1>
+        <p class="hero-lead reveal">Nuestro compromiso es claro: maximizar la vida útil de sus equipos, reducir tiempos de inactividad y garantizar la eficiencia de su operación.</p>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="grid-2">
+          <div class="card reveal">
+            <h3>¿Quiénes somos?</h3>
+            <p style="margin-bottom: 12px;">Somos una empresa que nace a raíz de una reunión entre 7 amigos, con un solo objetivo: seguir el legado de nuestros padres.</p>
+            <p style="margin-bottom: 12px;">De esta forma nace la idea de fundar una empresa dedicada al mantenimiento industrial, siendo conscientes de la alta competitividad en el ramo, pero con la responsabilidad y energía de ser la mejor opción para la industria nacional.</p>
+            <p>Nacimos con el propósito de ser un aliado estratégico para las empresas que dependen de maquinaria hidráulica.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Nuestro nombre y su significado</h3>
+            <p>Elegimos el nombre <strong>Zanjar</strong> por todo lo que representa: <strong>Resolver, Solucionar de Forma Rápida y Definitiva</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-block alt-bg">
+      <div class="container">
+        <div class="grid-cards">
+          <div class="card reveal">
+            <h3>Misión</h3>
+            <p>Brindar servicios de reparación y fabricación de cilindros hidráulicos con calidad, innovación y seguridad.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Visión</h3>
+            <p>Ser líderes en soluciones hidráulicas a nivel nacional, reconocidos por la excelencia y la confianza de nuestros clientes.</p>
+          </div>
+          <div class="card reveal">
+            <h3>Valores</h3>
+            <ul class="check-list">
+              <li><span class="check-mark">✓</span><span>Compromiso</span></li>
+              <li><span class="check-mark">✓</span><span>Responsabilidad</span></li>
+              <li><span class="check-mark">✓</span><span>Honestidad</span></li>
+              <li><span class="check-mark">✓</span><span>Innovación</span></li>
+              <li><span class="check-mark">✓</span><span>Servicio al cliente</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Industrias a nivel nacional</h2>
+          <p>Lo que inició siendo una idea efímera entre 7 amigos ahora es una empresa enfocada en proveer el servicio a las siguientes industrias a nivel nacional:</p>
+        </div>
+        <div class="chip-list reveal">
+          <span class="chip">Minería</span>
+          <span class="chip">Construcción</span>
+          <span class="chip">Acereras</span>
+          <span class="chip">Papeleras</span>
+          <span class="chip">Petroquímicas</span>
+          <span class="chip">Contratistas</span>
+          <span class="chip">Sector alimenticio</span>
+          <span class="chip">Sector salud</span>
+          <span class="chip">Energía</span>
+          <span class="chip">Industria automotriz</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 4: GARANTÍAS (AMARILLO) -->
+  <section id="page-garantias" class="page-view" data-theme="yellow" data-logo="logo amarillo.png" data-title="Garantías | Zanjar Services">
+    <div class="page-hero">
+      <div class="container">
+        <h1 class="reveal">Garantías</h1>
+        <p class="hero-lead reveal">Nuestra garantía - Tu tranquilidad. Garantía por escrito en cada trabajo.</p>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="card reveal" style="margin-bottom: 24px;">
+          <p style="color: var(--text-main); margin-bottom: 10px;">Trabajamos para empresas que no pueden detener su producción: constructoras, industrias manufactureras, agrícolas, mineras y de transporte.</p>
+          <p style="color: var(--text-main);">Nuestro objetivo es que tu maquinaria vuelva a operar con la misma fuerza, precisión y seguridad que cuando era nueva, pero en menor tiempo y a menor costo que comprar un componente nuevo.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal">
+            <h3>¿Qué incluye nuestra garantía?</h3>
+            <ul class="check-list">
+              <li><span class="check-mark">✓</span><span>Fugas por sello, empaque o montaje incorrecto</span></li>
+              <li><span class="check-mark">✓</span><span>Pérdida de presión por falla en el trabajo realizado</span></li>
+              <li><span class="check-mark">✓</span><span>Defecto en pieza maquinada o fabricada por nosotros</span></li>
+              <li><span class="check-mark">✓</span><span>Prueba de funcionamiento antes de la entrega</span></li>
+            </ul>
+          </div>
+          <div class="card reveal">
+            <h3>¿Qué no cubre?</h3>
+            <ul class="check-list">
+              <li><span class="check-mark muted">✕</span><span>Mal uso, sobrecarga o golpes en el equipo</span></li>
+              <li><span class="check-mark muted">✕</span><span>Contaminación del aceite hidráulico por parte del cliente</span></li>
+              <li><span class="check-mark muted">✕</span><span>Modificaciones realizadas por terceros después de la entrega</span></li>
+              <li><span class="check-mark muted">✕</span><span>Desgaste natural por uso prolongado</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-block alt-bg">
+      <div class="container">
+        <div class="section-header reveal"><h2>¿Por qué trabajar con nosotros?</h2></div>
+        <div class="grid-cards">
+          <div class="card reveal"><h3>Diagnóstico honesto</h3><p>Te decimos si conviene reparar o reemplazar. Si no conviene reparar, te lo decimos.</p></div>
+          <div class="card reveal"><h3>Pruebas reales</h3><p>Cada cilindro se entrega probado a presión de trabajo, no solo armado.</p></div>
+          <div class="card reveal"><h3>Materiales de calidad</h3><p>Sellos y aceros de marcas reconocidas, no genéricos de baja duración.</p></div>
+          <div class="card reveal"><h3>Entrega rápida</h3><p>Sabemos que cada hora parada te cuesta dinero.</p></div>
+          <div class="card reveal"><h3>Evidencia de trabajo</h3><p>Fotos del antes y después, y reporte de lo que se cambió.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="section-header reveal"><h2>¿Por qué escoger Zanjar?</h2></div>
+        <div class="chip-list reveal">
+          <span class="chip">Calidad en cada uno de nuestros servicios</span>
+          <span class="chip">Garantías hasta por 12 meses</span>
+          <span class="chip">Tiempos de entrega récord</span>
+          <span class="chip">Trabajos profesionales</span>
+          <span class="chip">Precios competitivos</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 5: GALERÍA (AZUL) -->
+  <section id="page-galeria" class="page-view" data-theme="blue" data-logo="logo azul.png" data-title="Galería de servicios realizados | Zanjar Services">
+    <div class="page-hero">
+      <div class="container">
+        <h1 class="reveal">Galería de servicios realizados</h1>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="gallery-empty reveal" id="gallery-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 6: CONTACTO (AMARILLO) -->
+  <section id="page-contacto" class="page-view" data-theme="yellow" data-logo="logo amarillo.png" data-title="Contacto | Zanjar Services">
+    <div class="page-hero">
+      <div class="container">
+        <h1 class="reveal">Contacto</h1>
+        <p class="hero-lead reveal">Evaluaciones, levantamientos y cotizaciones sin costo.</p>
+      </div>
+    </div>
+    <div class="section-block">
+      <div class="container">
+        <div class="contact-actions-grid reveal">
+          <a href="tel:5555725027" class="contact-btn primary"><span class="contact-btn-title">Llamar</span><span class="contact-btn-sub">55 5572 5027</span></a>
+          <a href="https://wa.me/525666264152" target="_blank" rel="noopener noreferrer" class="contact-btn primary"><span class="contact-btn-title">WhatsApp</span><span class="contact-btn-sub">56 6626 4152</span></a>
+          <a href="mailto:ventas@zanjar.net" class="contact-btn"><span class="contact-btn-title">Correo</span><span class="contact-btn-sub">ventas@zanjar.net</span></a>
+          <a href="mailto:zanjarservices@gmail.com" class="contact-btn"><span class="contact-btn-title">Correo</span><span class="contact-btn-sub">zanjarservices@gmail.com</span></a>
+        </div>
+        <div class="contact-info-list reveal">
+          <p>Contamos con la capacidad, personal y vehículos utilitarios para estar presente en cada situación con nuestros clientes.</p>
+          <p>Ofrecemos servicio de recolección de componentes y entregas personalizadas.</p>
+          <p>Contamos con convenio con paqueterías reconocidas para recibir tus equipos desde cualquier parte de la República Mexicana.</p>
+        </div>
+        <div class="locations-list reveal">
+          <div class="location-item"><strong>Oficinas corporativas</strong><span>Circunvalación Poniente 138B, Ciudad Satélite, Naucalpan de Juárez, C.P. 53100</span></div>
+          <div class="location-item"><strong>Taller de maquinados</strong><span>CDMX</span></div>
+          <div class="location-item"><strong>Taller de reparaciones</strong><span>Estado de México</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-box"><img id="footer-logo" class="footer-logo" src="logo rojo.png" alt="Zanjar Services" /></div>
+      </div>
+      <div>
+        <h4>Secciones</h4>
+        <ul class="footer-links">
+          <li><button data-page="cilindros">Cilindros Hidráulicos</button></li>
+          <li><button data-page="maquinados">Maquinados y Soldadura</button></li>
+          <li><button data-page="nosotros">Nosotros</button></li>
+          <li><button data-page="garantias">Garantías</button></li>
+          <li><button data-page="galeria">Galería</button></li>
+          <li><button data-page="contacto">Contacto</button></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul class="footer-links">
+          <li><a href="tel:5555725027">Oficina: 55 5572 5027</a></li>
+          <li><a href="https://wa.me/525666264152" target="_blank" rel="noopener noreferrer">WhatsApp: 56 6626 4152</a></li>
+          <li><a href="mailto:ventas@zanjar.net">ventas@zanjar.net</a></li>
+          <li><a href="mailto:zanjarservices@gmail.com">zanjarservices@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> Zanjar Services.</span></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const pages = document.querySelectorAll('.page-view');
+  const navTriggers = document.querySelectorAll('[data-page]');
+  const headerLogo = document.getElementById('header-logo');
+  const footerLogo = document.getElementById('footer-logo');
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMobile = document.getElementById('nav-mobile');
+  const yearEl = document.getElementById('year');
+
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -24px 0px' }
+  );
+
+  function observePageReveals(pageElement) {
+    const elements = pageElement.querySelectorAll('.reveal:not(.revealed)');
+    elements.forEach((el, idx) => {
+      el.style.transitionDelay = Math.min(idx * 40, 200) + 'ms';
+      revealObserver.observe(el);
+    });
+  }
+
+  function closeMobileMenu() {
+    navMobile.classList.remove('open');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function navigateTo(pageId, updateHash = true) {
+    const targetPage = document.getElementById('page-' + pageId);
+    if (!targetPage) return;
+
+    pages.forEach((page) => page.classList.remove('active'));
+    targetPage.classList.add('active');
+
+    const theme = targetPage.getAttribute('data-theme');
+    const logo = targetPage.getAttribute('data-logo');
+    const title = targetPage.getAttribute('data-title');
+
+    document.body.setAttribute('data-theme', theme);
+    headerLogo.src = logo;
+    footerLogo.src = logo;
+    if (title) document.title = title;
+
+    document.querySelectorAll('.nav-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-page') === pageId);
+    });
+
+    if (updateHash && window.location.hash !== '#' + pageId) {
+      window.location.hash = pageId;
+    }
+
+    closeMobileMenu();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    observePageReveals(targetPage);
+  }
+
+  navTriggers.forEach((trigger) => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      const pageId = trigger.getAttribute('data-page');
+      if (pageId) navigateTo(pageId);
+    });
+  });
+
+  menuToggle.addEventListener('click', () => {
+    const isOpen = navMobile.classList.toggle('open');
+    menuToggle.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  window.addEventListener('hashchange', () => {
+    const hash = window.location.hash.replace('#', '');
+    const validPages = ['cilindros', 'maquinados', 'nosotros', 'garantias', 'galeria', 'contacto'];
+    if (validPages.includes(hash)) navigateTo(hash, false);
+  });
+
+  const initialHash = window.location.hash.replace('#', '');
+  const validPages = ['cilindros', 'maquinados', 'nosotros', 'garantias', 'galeria', 'contacto'];
+  navigateTo(validPages.includes(initialHash) ? initialHash : 'cilindros', false);
+})();
+</script>
+</body>
+</html>
