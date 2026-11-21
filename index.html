@@ -22,6 +22,7 @@ body[data-theme="yellow"]{--accent:#F7C600;--accent-dark:#D6AB00;--accent-soft:#
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-body);color:var(--text-main);line-height:1.65;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+body.lightbox-open,body.menu-open{overflow:hidden}
 h1,h2,h3,h4{font-family:'Barlow','Inter',sans-serif;line-height:1.1;letter-spacing:-.01em}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
@@ -44,12 +45,20 @@ img{max-width:100%;display:block}
 .menu-toggle.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
 .menu-toggle.open span:nth-child(2){opacity:0}
 .menu-toggle.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
-.nav-mobile{display:none;background:var(--bg-dark);padding:10px 0 18px}
-.nav-mobile.open{display:block}
-.nav-mobile-list{display:flex;flex-direction:column;gap:2px}
-.nav-mobile .nav-btn{width:100%;text-align:left;padding:14px 14px;font-size:1.02rem;color:#E6EAF0;border-left:4px solid transparent}
+
+/* Menú lateral móvil (entra de derecha a izquierda) */
+.nav-backdrop{position:fixed;inset:0;background:rgba(10,13,18,.58);z-index:190;opacity:0;visibility:hidden;transition:opacity .32s ease,visibility .32s ease;backdrop-filter:blur(2px)}
+.nav-backdrop.open{opacity:1;visibility:visible}
+.nav-mobile{position:fixed;top:0;right:0;height:100dvh;width:min(82vw,320px);background:var(--bg-dark);z-index:200;display:flex;flex-direction:column;padding:18px 0 28px;box-shadow:-12px 0 36px rgba(0,0,0,.4);transform:translateX(100%);visibility:hidden;transition:transform .34s cubic-bezier(.22,1,.36,1),visibility .34s ease;overflow-y:auto}
+.nav-mobile.open{transform:translateX(0);visibility:visible}
+.nav-mobile-header{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 18px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:10px}
+.nav-mobile-title{font-family:'Barlow','Inter',sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#9AA3B0}
+.nav-mobile-close{width:40px;height:40px;border:none;background:rgba(255,255,255,.08);color:#FFFFFF;font-size:1.5rem;line-height:1;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background-color .2s ease}
+.nav-mobile-close:hover{background:var(--accent)}
+.nav-mobile-list{display:flex;flex-direction:column;gap:4px;padding:0 12px}
+.nav-mobile .nav-btn{width:100%;text-align:left;padding:15px 16px;font-size:1.02rem;color:#E6EAF0;border-left:4px solid transparent;border-radius:0 4px 4px 0}
 .nav-mobile .nav-btn:hover{background:rgba(255,255,255,.06)}
-.nav-mobile .nav-btn.active{background:rgba(255,255,255,.08);color:#FFFFFF;border-left-color:var(--accent)}
+.nav-mobile .nav-btn.active{background:rgba(255,255,255,.09);color:#FFFFFF;border-left-color:var(--accent)}
 
 /* ===== PÁGINAS ===== */
 main{flex:1}
@@ -64,41 +73,39 @@ main{flex:1}
   background-size:cover;background-position:center;background-repeat:no-repeat;
   padding:clamp(48px,8vw,104px) 0 clamp(64px,9vw,120px);
   clip-path:polygon(0 0,100% 0,100% calc(100% - clamp(22px,4vw,48px)),0 100%);margin-bottom:calc(-1 * clamp(22px,4vw,48px) + 1px)}
-.page-hero::before{content:"";position:absolute;top:0;bottom:0;right:-6%;width:38%;background:var(--accent);transform:skewX(-18deg);opacity:.85;transition:background var(--transition-theme)}
+.page-hero::before{content:"";position:absolute;top:0;bottom:0;right:-6%;width:38%;background:var(--accent);transform:skewX(-18deg);opacity:.86;transition:background var(--transition-theme)}
 .page-hero::after{content:"";position:absolute;top:0;bottom:0;right:30%;width:10px;background:var(--accent);transform:skewX(-18deg);opacity:.5;transition:background var(--transition-theme)}
 .page-hero .container{position:relative;z-index:2}
-.page-hero h1{font-size:clamp(2.1rem,6vw,4rem);font-weight:800;text-transform:uppercase;margin-bottom:18px;max-width:780px;text-shadow:0 2px 24px rgba(0,0,0,.45)}
-.page-hero p.hero-lead{font-size:clamp(1rem,2.2vw,1.2rem);color:#D6DBE3;max-width:640px;margin-bottom:30px;text-shadow:0 1px 12px rgba(0,0,0,.5)}
+.page-hero h1{font-size:clamp(2.1rem,6vw,4rem);font-weight:800;text-transform:uppercase;margin-bottom:18px;max-width:780px;text-shadow:0 3px 24px rgba(0,0,0,.65)}
+.page-hero p.hero-lead{font-size:clamp(1rem,2.2vw,1.2rem);color:#EEF2F7;max-width:640px;margin-bottom:30px;text-shadow:0 2px 14px rgba(0,0,0,.7)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
 
-/* Fondos fotográficos reales */
+/* Fondos locales con velo oscuro para alta legibilidad */
 #page-cilindros .page-hero{
-  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
-    url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=80');
+  background-image:linear-gradient(100deg,rgba(10,13,18,.90) 0%,rgba(10,13,18,.78) 55%,rgba(10,13,18,.62) 100%),
+    url('fondocilindros.png');
 }
 #page-maquinados .page-hero{
-  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
-    url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=1600&q=80');
+  background-image:linear-gradient(100deg,rgba(10,13,18,.90) 0%,rgba(10,13,18,.78) 55%,rgba(10,13,18,.62) 100%),
+    url('fondomaquinados.png');
 }
 #page-nosotros .page-hero{
-  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
-    url('https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=1600&q=80');
+  background-image:linear-gradient(100deg,rgba(10,13,18,.90) 0%,rgba(10,13,18,.78) 55%,rgba(10,13,18,.62) 100%),
+    url('fondonosotros.png');
 }
 #page-garantias .page-hero{
-  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
-    url('https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?auto=format&fit=crop&w=1600&q=80');
+  background-image:linear-gradient(100deg,rgba(10,13,18,.90) 0%,rgba(10,13,18,.78) 55%,rgba(10,13,18,.62) 100%),
+    url('fondogarantia.png');
 }
 #page-galeria .page-hero{
-  background-image:linear-gradient(100deg,rgba(15,18,21,.88) 0%,rgba(15,18,21,.70) 55%,rgba(15,18,21,.45) 100%),
-    url('https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=1600&q=80');
+  background-image:linear-gradient(100deg,rgba(10,13,18,.90) 0%,rgba(10,13,18,.78) 55%,rgba(10,13,18,.62) 100%),
+    url('fondogaleria.png');
 }
 #page-contacto .page-hero{
   background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
   background-size:36px 36px;
 }
-#page-contacto .page-hero::before{
-  opacity:.95;
-}
+#page-contacto .page-hero::before{opacity:.95}
 
 /* ===== BOTONES ===== */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Barlow','Inter',sans-serif;font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.05em;padding:14px 28px;border:2px solid transparent;cursor:pointer;text-align:center;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:transform .18s ease,background-color .2s ease,color .2s ease}
@@ -161,7 +168,43 @@ main{flex:1}
 .location-item span{font-size:.95rem;color:var(--text-muted)}
 
 /* ===== GALERÍA ===== */
-.gallery-empty{min-height:240px;border:2px dashed var(--border-light);background:var(--bg-surface)}
+.gallery-mobile-tabs{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.gallery-tab-btn{font-family:'Barlow','Inter',sans-serif;font-weight:800;font-size:.92rem;text-transform:uppercase;letter-spacing:.04em;padding:14px 12px;border:2px solid var(--border-light);background:var(--bg-surface);color:var(--text-main);cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background-color .25s ease,color .25s ease,border-color .25s ease,transform .18s ease}
+.gallery-tab-btn.active{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.gallery-tab-btn:active{transform:scale(.98)}
+
+.gallery-group{margin-bottom:56px}
+.gallery-group:last-child{margin-bottom:0}
+.gallery-swipe-hint{display:none;align-items:center;justify-content:flex-end;font-size:.86rem;font-weight:600;color:var(--text-muted);margin-bottom:10px}
+.gallery-slider-wrap{position:relative}
+.gallery-arrow{display:none;position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:40px;height:44px;border:none;border-radius:4px;background:rgba(15,18,21,.76);color:#FFFFFF;font-size:1.25rem;cursor:pointer;align-items:center;justify-content:center;transition:background-color .2s ease,transform .18s ease}
+.gallery-arrow:active{transform:translateY(-50%) scale(.94);background:var(--accent)}
+.gallery-arrow.prev{left:10px}
+.gallery-arrow.next{right:10px}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.gallery-item{position:relative;aspect-ratio:4/3;background:var(--bg-dark);overflow:hidden;border:1px solid var(--border-light);border-bottom:4px solid var(--accent);cursor:pointer;padding:0;display:block;width:100%;transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s ease}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.gallery-item::after{content:"⤢";position:absolute;right:10px;bottom:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(15,18,21,.75);color:#FFFFFF;font-size:.95rem;border-radius:3px;opacity:0;transform:scale(.9);transition:opacity .25s ease,transform .25s ease}
+@media (hover:hover){
+  .gallery-item:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(15,18,21,.16)}
+  .gallery-item:hover img{transform:scale(1.06)}
+  .gallery-item:hover::after{opacity:1;transform:scale(1)}
+}
+
+/* Lightbox (Vista ampliada) */
+.lightbox{position:fixed;inset:0;z-index:1000;background:rgba(10,12,16,.94);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease;backdrop-filter:blur(4px)}
+.lightbox.open{opacity:1;visibility:visible}
+.lightbox-content{position:relative;max-width:min(92vw,1100px);max-height:86vh;display:flex;flex-direction:column;align-items:center;gap:12px}
+.lightbox-img{max-width:100%;max-height:78vh;width:auto;height:auto;object-fit:contain;border:2px solid rgba(255,255,255,.14);box-shadow:0 20px 50px rgba(0,0,0,.6);transform:scale(.95);opacity:0;transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .25s ease}
+.lightbox.open .lightbox-img{transform:scale(1);opacity:1}
+.lightbox-caption{color:#D6DBE3;font-family:'Barlow','Inter',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-align:center}
+.lightbox-close{position:fixed;top:18px;right:20px;width:44px;height:44px;border:none;background:rgba(255,255,255,.14);color:#FFFFFF;font-size:1.6rem;line-height:1;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:background-color .2s ease}
+.lightbox-close:hover{background:var(--accent)}
+.lightbox-nav{position:fixed;top:50%;transform:translateY(-50%);width:48px;height:56px;border:none;background:rgba(255,255,255,.14);color:#FFFFFF;font-size:1.6rem;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:background-color .2s ease}
+.lightbox-nav:hover{background:var(--accent)}
+.lightbox-prev{left:16px}
+.lightbox-next{right:16px}
 
 /* ===== FOOTER ===== */
 .site-footer{background:var(--bg-dark);color:#C9D0DA;border-top:5px solid var(--accent);padding:46px 0 24px;transition:border-color var(--transition-theme)}
@@ -177,6 +220,38 @@ main{flex:1}
 /* ===== RESPONSIVE ===== */
 @media (hover:hover){.card:hover{transform:translateY(-3px)}}
 @media (max-width:960px){.nav-desktop{display:none}.menu-toggle{display:inline-flex}.page-hero::before{width:30%;right:-10%}.page-hero::after{right:22%}}
+@media (max-width:768px){
+  .gallery-mobile-tabs{display:grid}
+  .gallery-group{display:none;margin-bottom:0;animation:pageEnter .3s ease}
+  .gallery-group.mobile-active{display:block}
+  .gallery-group .section-header{display:none}
+  .gallery-swipe-hint{display:flex}
+  .gallery-arrow{display:flex}
+  .gallery-grid{
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;
+    gap:0;
+    padding:0;
+    scrollbar-width:none;
+    box-shadow:0 10px 24px rgba(15,18,21,.12);
+  }
+  .gallery-grid::-webkit-scrollbar{display:none}
+  .gallery-item{
+    flex:0 0 100%;
+    scroll-snap-align:start;
+    aspect-ratio:4/3;
+    border-left:none;
+    border-right:none;
+  }
+  .gallery-item::after{opacity:.9;transform:scale(1)}
+  .lightbox-nav{width:40px;height:48px;font-size:1.3rem}
+  .lightbox-prev{left:8px}
+  .lightbox-next{right:8px}
+}
 @media (max-width:600px){
   .page-hero::before{width:22%}.page-hero::after{display:none}
   .hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -185,7 +260,7 @@ main{flex:1}
   .chip{font-size:.87rem;padding:10px 8px;min-height:48px}
   .service-item{padding:16px 16px}
 }
-@media (max-width:340px){.hero-actions{grid-template-columns:1fr}.chip-list{grid-template-columns:1fr}.brand-logo{height:36px}}
+@media (max-width:340px){.hero-actions{grid-template-columns:1fr}.chip-list{grid-template-columns:1fr}.brand-logo{height:36px}.gallery-mobile-tabs{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -211,19 +286,24 @@ main{flex:1}
       </button>
     </div>
   </div>
-  <nav class="nav-mobile" id="nav-mobile" aria-label="Navegación móvil">
-    <div class="container">
-      <div class="nav-mobile-list">
-        <button class="nav-btn active" data-page="cilindros">Cilindros Hidráulicos</button>
-        <button class="nav-btn" data-page="maquinados">Maquinados y Soldadura</button>
-        <button class="nav-btn" data-page="nosotros">Nosotros</button>
-        <button class="nav-btn" data-page="garantias">Garantías</button>
-        <button class="nav-btn" data-page="galeria">Galería de servicios realizados</button>
-        <button class="nav-btn" data-page="contacto">Contacto</button>
-      </div>
-    </div>
-  </nav>
 </header>
+
+<!-- MENÚ LATERAL MÓVIL -->
+<div class="nav-backdrop" id="nav-backdrop"></div>
+<nav class="nav-mobile" id="nav-mobile" aria-label="Navegación móvil">
+  <div class="nav-mobile-header">
+    <span class="nav-mobile-title">Menú</span>
+    <button class="nav-mobile-close" id="nav-mobile-close" aria-label="Cerrar menú">&times;</button>
+  </div>
+  <div class="nav-mobile-list">
+    <button class="nav-btn active" data-page="cilindros">Cilindros Hidráulicos</button>
+    <button class="nav-btn" data-page="maquinados">Maquinados y Soldadura</button>
+    <button class="nav-btn" data-page="nosotros">Nosotros</button>
+    <button class="nav-btn" data-page="garantias">Garantías</button>
+    <button class="nav-btn" data-page="galeria">Galería de servicios realizados</button>
+    <button class="nav-btn" data-page="contacto">Contacto</button>
+  </div>
+</nav>
 
 <main>
   <!-- PÁGINA 1: CILINDROS HIDRÁULICOS (ROJO) -->
@@ -490,7 +570,33 @@ main{flex:1}
     </div>
     <div class="section-block">
       <div class="container">
-        <div class="gallery-empty reveal" id="gallery-container"></div>
+        <!-- Botones de sección (visibles en celular) -->
+        <div class="gallery-mobile-tabs" role="tablist" aria-label="Categorías de galería">
+          <button class="gallery-tab-btn active" data-gallery-tab="cilindros" role="tab" aria-selected="true">Cilindros Hidráulicos</button>
+          <button class="gallery-tab-btn" data-gallery-tab="maquinados" role="tab" aria-selected="false">Maquinados y Soldadura</button>
+        </div>
+
+        <!-- Grupo 1: Cilindros Hidráulicos -->
+        <div class="gallery-group mobile-active" id="gallery-group-cilindros">
+          <div class="section-header reveal"><h2>Cilindros Hidráulicos</h2></div>
+          <div class="gallery-swipe-hint"><span>Toca para ampliar</span></div>
+          <div class="gallery-slider-wrap">
+            <button type="button" class="gallery-arrow prev" data-slider-target="grid-cilindros" data-dir="-1" aria-label="Foto anterior">&#10094;</button>
+            <div class="gallery-grid" id="grid-cilindros"></div>
+            <button type="button" class="gallery-arrow next" data-slider-target="grid-cilindros" data-dir="1" aria-label="Foto siguiente">&#10095;</button>
+          </div>
+        </div>
+
+        <!-- Grupo 2: Maquinados y Soldadura -->
+        <div class="gallery-group" id="gallery-group-maquinados">
+          <div class="section-header reveal"><h2>Maquinados y Soldadura</h2></div>
+          <div class="gallery-swipe-hint"><span>Toca para ampliar</span></div>
+          <div class="gallery-slider-wrap">
+            <button type="button" class="gallery-arrow prev" data-slider-target="grid-maquinados" data-dir="-1" aria-label="Foto anterior">&#10094;</button>
+            <div class="gallery-grid" id="grid-maquinados"></div>
+            <button type="button" class="gallery-arrow next" data-slider-target="grid-maquinados" data-dir="1" aria-label="Foto siguiente">&#10095;</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -525,6 +631,17 @@ main{flex:1}
     </div>
   </section>
 </main>
+
+<!-- LIGHTBOX PARA GALERÍA -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Vista ampliada de imagen">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Anterior">&#10094;</button>
+  <div class="lightbox-content">
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Siguiente">&#10095;</button>
+</div>
 
 <!-- FOOTER -->
 <footer class="site-footer">
@@ -566,10 +683,160 @@ main{flex:1}
   const footerLogo = document.getElementById('footer-logo');
   const menuToggle = document.getElementById('menu-toggle');
   const navMobile = document.getElementById('nav-mobile');
+  const navBackdrop = document.getElementById('nav-backdrop');
+  const navMobileClose = document.getElementById('nav-mobile-close');
   const yearEl = document.getElementById('year');
 
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  /* ===== GALERÍA DE IMÁGENES ===== */
+  const galleryData = {
+    cilindros: [
+      'cilindros1.jpeg', 'cilindros2.jpeg', 'cilindros3.jpeg', 'cilindros4.jpeg',
+      'cilindros5.jpeg', 'cilindros6.jpeg', 'cilindros7.jpeg', 'cilindros8.jpeg',
+      'cilindros9.jpeg', 'cilindros10.jpeg', 'cilintros11.jpeg', 'cilindros12.jpeg',
+      'cilindros13.jpeg', 'cilindros14.jpeg', 'cilindros15.jpeg', 'cilindros16.jpeg',
+      'cilindros17.jpeg', 'cilindros18.jpeg', 'cilindros19.jpeg'
+    ],
+    maquinados: [
+      'maquinado1.jpeg', 'maquinado2.jpeg', 'maquinado3.jpeg', 'maquinado4.jpeg',
+      'maquinado5.jpeg', 'maquinado6.jpeg', 'maquinado7.jpeg', 'maquinado8.jpeg',
+      'maquinado9.jpeg', 'maquinado10.jpeg'
+    ]
+  };
+
+  const categoryLabels = {
+    cilindros: 'Cilindros Hidráulicos',
+    maquinados: 'Maquinados y Soldadura'
+  };
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightboxClose = document.getElementById('lightbox-close');
+  const lightboxPrev = document.getElementById('lightbox-prev');
+  const lightboxNext = document.getElementById('lightbox-next');
+
+  let currentCategory = 'cilindros';
+  let currentIndex = 0;
+
+  function renderGallery(category, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const files = galleryData[category];
+    files.forEach((file, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'gallery-item';
+      btn.setAttribute('aria-label', `${categoryLabels[category]} - Foto ${idx + 1}`);
+      const img = document.createElement('img');
+      img.src = file;
+      img.alt = `${categoryLabels[category]} ${idx + 1}`;
+      img.loading = 'lazy';
+      btn.appendChild(img);
+      btn.addEventListener('click', () => openLightbox(category, idx));
+      container.appendChild(btn);
+    });
+  }
+
+  renderGallery('cilindros', 'grid-cilindros');
+  renderGallery('maquinados', 'grid-maquinados');
+
+  /* Flechas de galería en móvil */
+  document.querySelectorAll('.gallery-arrow').forEach((arrow) => {
+    arrow.addEventListener('click', () => {
+      const targetId = arrow.getAttribute('data-slider-target');
+      const dir = Number(arrow.getAttribute('data-dir'));
+      const slider = document.getElementById(targetId);
+      if (!slider) return;
+      const step = slider.clientWidth;
+      const maxScroll = slider.scrollWidth - step;
+      if (dir > 0 && slider.scrollLeft >= maxScroll - 8) {
+        slider.scrollTo({ left: 0, behavior: 'smooth' });
+      } else if (dir < 0 && slider.scrollLeft <= 8) {
+        slider.scrollTo({ left: maxScroll, behavior: 'smooth' });
+      } else {
+        slider.scrollBy({ left: dir * step, behavior: 'smooth' });
+      }
+    });
+  });
+
+  function updateLightboxImage() {
+    const list = galleryData[currentCategory];
+    lightboxImg.src = list[currentIndex];
+    lightboxImg.alt = `${categoryLabels[currentCategory]} ${currentIndex + 1}`;
+    lightboxCaption.textContent = `${categoryLabels[currentCategory]} — ${currentIndex + 1} / ${list.length}`;
+  }
+
+  function openLightbox(category, index) {
+    currentCategory = category;
+    currentIndex = index;
+    updateLightboxImage();
+    lightbox.classList.add('open');
+    document.body.classList.add('lightbox-open');
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.classList.remove('lightbox-open');
+  }
+
+  function stepLightbox(delta) {
+    const list = galleryData[currentCategory];
+    currentIndex = (currentIndex + delta + list.length) % list.length;
+    updateLightboxImage();
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+  lightboxNext.addEventListener('click', () => stepLightbox(1));
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMobile.classList.contains('open')) {
+      closeMobileMenu();
+      return;
+    }
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') stepLightbox(-1);
+    if (e.key === 'ArrowRight') stepLightbox(1);
+  });
+
+  /* Deslizar dentro del lightbox en celular */
+  let touchStartX = 0;
+  lightbox.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  lightbox.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 45) stepLightbox(diff < 0 ? 1 : -1);
+  }, { passive: true });
+
+  /* Botones de categoría en vista móvil */
+  const galleryTabBtns = document.querySelectorAll('.gallery-tab-btn');
+  const galleryGroups = {
+    cilindros: document.getElementById('gallery-group-cilindros'),
+    maquinados: document.getElementById('gallery-group-maquinados')
+  };
+
+  galleryTabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-gallery-tab');
+      galleryTabBtns.forEach((b) => {
+        const isActive = b === btn;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', String(isActive));
+      });
+      Object.keys(galleryGroups).forEach((key) => {
+        galleryGroups[key].classList.toggle('mobile-active', key === target);
+      });
+    });
+  });
+
+  /* ===== ANIMACIONES Y NAVEGACIÓN ===== */
   const revealObserver = new IntersectionObserver(
     (entries, observer) => {
       entries.forEach((entry) => {
@@ -590,10 +857,20 @@ main{flex:1}
     });
   }
 
+  function openMobileMenu() {
+    navMobile.classList.add('open');
+    navBackdrop.classList.add('open');
+    menuToggle.classList.add('open');
+    menuToggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-open');
+  }
+
   function closeMobileMenu() {
     navMobile.classList.remove('open');
+    navBackdrop.classList.remove('open');
     menuToggle.classList.remove('open');
     menuToggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
   }
 
   function navigateTo(pageId, updateHash = true) {
@@ -634,10 +911,15 @@ main{flex:1}
   });
 
   menuToggle.addEventListener('click', () => {
-    const isOpen = navMobile.classList.toggle('open');
-    menuToggle.classList.toggle('open', isOpen);
-    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    if (navMobile.classList.contains('open')) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
   });
+
+  navBackdrop.addEventListener('click', closeMobileMenu);
+  navMobileClose.addEventListener('click', closeMobileMenu);
 
   window.addEventListener('hashchange', () => {
     const hash = window.location.hash.replace('#', '');
