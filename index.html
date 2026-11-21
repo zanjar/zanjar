@@ -168,13 +168,15 @@ main{flex:1}
 .location-item span{font-size:.95rem;color:var(--text-muted)}
 
 /* ===== GALERÍA ===== */
-.gallery-mobile-tabs{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.gallery-tab-btn{font-family:'Barlow','Inter',sans-serif;font-weight:800;font-size:.92rem;text-transform:uppercase;letter-spacing:.04em;padding:14px 12px;border:2px solid var(--border-light);background:var(--bg-surface);color:var(--text-main);cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background-color .25s ease,color .25s ease,border-color .25s ease,transform .18s ease}
+.gallery-mobile-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,260px));gap:12px;margin-bottom:28px}
+.gallery-tab-btn{font-family:'Barlow','Inter',sans-serif;font-weight:800;font-size:.95rem;text-transform:uppercase;letter-spacing:.04em;padding:14px 16px;border:2px solid var(--border-light);background:var(--bg-surface);color:var(--text-main);cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:background-color .25s ease,color .25s ease,border-color .25s ease,transform .18s ease}
+.gallery-tab-btn:hover{border-color:var(--accent)}
 .gallery-tab-btn.active{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
 .gallery-tab-btn:active{transform:scale(.98)}
 
-.gallery-group{margin-bottom:56px}
-.gallery-group:last-child{margin-bottom:0}
+.gallery-group{display:none;margin-bottom:0;animation:pageEnter .3s ease}
+.gallery-group.mobile-active{display:block}
+.gallery-group .section-header{display:none}
 .gallery-swipe-hint{display:none;align-items:center;justify-content:flex-end;font-size:.86rem;font-weight:600;color:var(--text-muted);margin-bottom:10px}
 .gallery-slider-wrap{position:relative}
 .gallery-arrow{display:none;position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:40px;height:44px;border:none;border-radius:4px;background:rgba(15,18,21,.76);color:#FFFFFF;font-size:1.25rem;cursor:pointer;align-items:center;justify-content:center;transition:background-color .2s ease,transform .18s ease}
@@ -221,10 +223,8 @@ main{flex:1}
 @media (hover:hover){.card:hover{transform:translateY(-3px)}}
 @media (max-width:960px){.nav-desktop{display:none}.menu-toggle{display:inline-flex}.page-hero::before{width:30%;right:-10%}.page-hero::after{right:22%}}
 @media (max-width:768px){
-  .gallery-mobile-tabs{display:grid}
-  .gallery-group{display:none;margin-bottom:0;animation:pageEnter .3s ease}
-  .gallery-group.mobile-active{display:block}
-  .gallery-group .section-header{display:none}
+  .gallery-mobile-tabs{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .gallery-tab-btn{font-size:.92rem;padding:14px 12px}
   .gallery-swipe-hint{display:flex}
   .gallery-arrow{display:flex}
   .gallery-grid{
@@ -570,7 +570,7 @@ main{flex:1}
     </div>
     <div class="section-block">
       <div class="container">
-        <!-- Botones de sección (visibles en celular) -->
+        <!-- Botones de sección (PC y móvil) -->
         <div class="gallery-mobile-tabs" role="tablist" aria-label="Categorías de galería">
           <button class="gallery-tab-btn active" data-gallery-tab="cilindros" role="tab" aria-selected="true">Cilindros Hidráulicos</button>
           <button class="gallery-tab-btn" data-gallery-tab="maquinados" role="tab" aria-selected="false">Maquinados y Soldadura</button>
@@ -815,7 +815,7 @@ main{flex:1}
     if (Math.abs(diff) > 45) stepLightbox(diff < 0 ? 1 : -1);
   }, { passive: true });
 
-  /* Botones de categoría en vista móvil */
+  /* Botones de categoría en PC y móvil */
   const galleryTabBtns = document.querySelectorAll('.gallery-tab-btn');
   const galleryGroups = {
     cilindros: document.getElementById('gallery-group-cilindros'),
